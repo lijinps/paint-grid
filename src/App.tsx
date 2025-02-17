@@ -41,49 +41,58 @@ export default function App() {
 
       Array.from(word).forEach((letter, j) => {
         tableGrid[i][j] = {
-          color: "#1b84f0",
+          color: "",
           letter,
           isVisited: false,
         };
       });
     });
-    // for (let i = 0; i < noRows; i++) {
-    //   for (let j = 0; j < noCols; j++) {
-    //     paintAdjecent(i, j, getRandomColor());
-    //   }
-    // }
-    paintAdjecent(1, 1, getRandomColor());
+    for (let i = 0; i < noRows; i++) {
+      for (let j = 0; j < noCols; j++) {
+        paintAdjecent(i, j);
+      }
+    }
+    // paintAdjecent(2, 1, getRandomColor());
 
     setWordCells(tableGrid);
   };
 
   const paintAdjecent = (
     row: number,
-    col: number,
-    color: string
+    col: number
+
     // direction: [number, number]
   ) => {
-    tableGrid[row][col].color = color;
     tableGrid[row][col].isVisited = true;
-    if (
-      row < 0 ||
-      col < 0 ||
-      row > noRows ||
-      col > noCols ||
-      tableGrid[row][col].isVisited
-    ) {
+    if (row < 0 || col < 0 || row > noRows || col > noCols) {
       return;
     }
+
     for (let i = 0; i < directions.length; i++) {
       const r = row + directions[i][0];
       const c = col + directions[i][1];
       if (
         r < noRows &&
+        r > 0 &&
         c < noCols &&
-        tableGrid[row][col]?.letter === tableGrid[r][c].letter
+        c > 0 &&
+        tableGrid[row][col]?.letter === tableGrid[r][c].letter &&
+        !tableGrid[r][c].isVisited
       ) {
-        paintAdjecent(r, c, color);
+        paintAdjecent(r, c);
+      } else if (
+        r < noRows &&
+        r > 0 &&
+        c < noCols &&
+        c > 0 &&
+        tableGrid[row][col]?.letter === tableGrid[r][c].letter &&
+        tableGrid[r][c].isVisited
+      ) {
+        tableGrid[row][col].color = tableGrid[r][c].color;
       }
+    }
+    if (tableGrid[row][col].color === "") {
+      tableGrid[row][col].color = getRandomColor();
     }
   };
 
